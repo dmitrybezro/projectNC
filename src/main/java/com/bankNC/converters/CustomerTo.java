@@ -1,3 +1,4 @@
+/*
 package com.bankNC.converters;
 
 import com.bankNC.entity.Customer;
@@ -28,7 +29,7 @@ public class CustomerTo {
 
         for(int i = 0; i < 4; i++){
             listValues.add(new ValueDto());
-            listValues.get(i).setObjid(objectId);
+            listValues.get(i).setPrimaryKey;
         }
 
         listValues.get(0).setAttrId(1);
@@ -50,3 +51,4 @@ public class CustomerTo {
     }
 
 }
+*/

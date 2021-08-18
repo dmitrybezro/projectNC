@@ -1,16 +1,15 @@
 package com.bankNC.entity.forTables;
 
 import lombok.*;
-import org.hibernate.Interceptor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @AllArgsConstructor
-//@NoArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
-@IdClass(ValueDto.ValueKey.class)
+@IdClass(ValueKey.class)
 @Entity
 @Table(name = "values")
 public class ValueDto implements Serializable {
@@ -24,23 +23,18 @@ public class ValueDto implements Serializable {
 
     @Column(name = "param_val")
     private String param_val;
+}
 
-    public ValueDto(){
-    }
+@AllArgsConstructor
+@EqualsAndHashCode
+@ToString
+@NoArgsConstructor
+class ValueKey implements Serializable {
+    @Getter
+    @Setter
+    private Integer objid;
 
-    @AllArgsConstructor
-    @EqualsAndHashCode
-    @ToString
-    @NoArgsConstructor
-  //  @Embeddable
-    public class ValueKey implements Serializable {
-        @Getter
-        @Setter
-        private Integer objid;
-
-        @Getter
-        @Setter
-        private Integer attrId;
-
-    }
+    @Getter
+    @Setter
+    private Integer attrId;
 }

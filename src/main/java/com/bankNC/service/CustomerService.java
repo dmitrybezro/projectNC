@@ -1,6 +1,6 @@
 package com.bankNC.service;
 
-import com.bankNC.converters.CustomerTo;
+/*import com.bankNC.converters.CustomerTo;*/
 import com.bankNC.entity.Customer;
 import com.bankNC.entity.forTables.ObjectDto;
 import com.bankNC.entity.forTables.ValueDto;
@@ -25,7 +25,7 @@ public class CustomerService {
     @Autowired
     private ValuesRepository valueRepository;
 
-    public void AddCustomer(Customer customer){
+/*    public void AddCustomer(Customer customer){
         ObjectDto objectDto = CustomerTo.splitObject(customer);
         List<ValueDto> listValue = CustomerTo.splitValues(customer, 1010+
                 (int)objectsRepository.count());
@@ -34,7 +34,7 @@ public class CustomerService {
         for(int i = 0 ; i < 4; i++){
             valueRepository.save(listValue.get(i));
         }
-    }
+    }*/
 
     public Customer getOne(Integer objid) throws CustomerNotFoundException {
 

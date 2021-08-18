@@ -1,6 +1,6 @@
 package com.bankNC.controller;
 
-import com.bankNC.converters.CustomerTo;
+/*import com.bankNC.converters.CustomerTo;*/
 import com.bankNC.entity.Customer;
 import com.bankNC.entity.forTables.ObjectDto;
 import com.bankNC.entity.forTables.ValueDto;
@@ -21,7 +21,7 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    @PostMapping("/save")
+/*    @PostMapping("/save")
     public ResponseEntity save(@RequestBody Customer customer){
         try {
             customerService.AddCustomer(customer);
@@ -29,7 +29,7 @@ public class CustomerController {
         }catch (Exception exception){
             return ResponseEntity.badRequest().body("Произошла ошибка");
         }
-    }
+    }*/
 
     @GetMapping("/users")
     public ResponseEntity getUsers() {
