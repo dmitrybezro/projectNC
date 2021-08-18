@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bankNC.repository.ObjectsRepository;
-import com.bankNC.repository.ValueRepository;
+import com.bankNC.repository.ValuesRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public class CustomerService {
     private ObjectsRepository objectsRepository;
 
     @Autowired
-    private ValueRepository valueRepository;
+    private ValuesRepository valueRepository;
 
     public void AddCustomer(Customer customer){
         ObjectDto objectDto = CustomerTo.splitObject(customer);
@@ -36,26 +36,19 @@ public class CustomerService {
         }
     }
 
-    public Customer getOne(Integer objId) throws CustomerNotFoundException{
-        //ObjectDto objectDto = objectsRepository.findById(objId).get();
+    public Customer getOne(Integer objid) throws CustomerNotFoundException {
 
         Customer customer = new Customer();
 
+        List<ValueDto> listAttr = new ArrayList<>();
 
+        listAttr = valueRepository.findAllByObjid(objid);
 
-     //   customer.setFirstName(valueRepository.findByAttrIdAndObjId( 1, objId    ).getParam_val());
-       // customer.setFirstName(valueRepository.findByAttrIdAndObjId( 2, objId    ).getParam_val());
-       // customer.setPatronymic(valueRepository.findByObjIdAndAttrId(objId, 3).getParam_val());
-     //   customer.setDatOfBirth(valueRepository.findByObjIdAndAttrId(objId, 4).getParam_val());
-      //  customer.setNumberAccount(Integer.parseInt(valueRepository.findByObjIdAndAttrId(objId, 5).getParam_val()));
-
-        List<ValueDto> listAttr = valueRepository.findByObjId(objId);
         if(listAttr.size() == 0){
             throw new CustomerNotFoundException("Пользователь не найден");
         }
-        String param;
         for(int i = 0; i < listAttr.size(); i++){
-            param = listAttr.get(i).getParam_val();
+            String param = listAttr.get(i).getParam_val();
 
             switch(listAttr.get(i).getAttrId()){
                 case 1:
@@ -78,4 +71,5 @@ public class CustomerService {
 
         return customer;
     }
+
 }

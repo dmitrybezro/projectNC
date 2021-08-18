@@ -41,13 +41,13 @@ public class CustomerController {
     }
 
     @GetMapping("/room")
-    public ResponseEntity getOneCustomer(@RequestParam Integer objId){
+    public ResponseEntity getOneCustomer(@RequestParam Integer objid){
         try {
-            return ResponseEntity.ok(customerService.getOne(objId));
+            return ResponseEntity.ok(customerService.getOne(objid));
         }catch (CustomerNotFoundException exception){
             return ResponseEntity.badRequest().body(exception.getMessage());
         } catch (Exception exception){
-        return ResponseEntity.badRequest().body("Произошла ошибка");
+        return ResponseEntity.badRequest().body(exception.getMessage());
         }
     }
 }

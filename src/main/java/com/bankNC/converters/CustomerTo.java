@@ -28,7 +28,7 @@ public class CustomerTo {
 
         for(int i = 0; i < 4; i++){
             listValues.add(new ValueDto());
-            listValues.get(i).setObjId(objectId);
+            listValues.get(i).setObjid(objectId);
         }
 
         listValues.get(0).setAttrId(1);
