@@ -10,10 +10,10 @@ import java.util.List;
 @Getter
 
 public class Account {
-    private double balance;
+    private Double balance;
     private String currency;
     private String dataOpen;
-    private int closeOperation;
+    private Integer closeOperation;
     private List<Operation> listOperation;
 
     {

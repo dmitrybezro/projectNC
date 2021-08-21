@@ -1,18 +1,14 @@
 package com.bankNC.controller;
 
 /*import com.bankNC.converters.CustomerTo;*/
-import com.bankNC.entity.Customer;
-import com.bankNC.entity.forTables.ObjectDto;
-import com.bankNC.entity.forTables.ValueDto;
 
 import com.bankNC.exception.CustomerNotFoundException;
 import com.bankNC.service.CustomerService;
-import jdk.jfr.Unsigned;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.math.BigInteger;
 
 @RestController
 @RequestMapping("/api")
@@ -40,10 +36,10 @@ public class CustomerController {
         }
     }
 
-    @GetMapping("/room")
-    public ResponseEntity getOneCustomer(@RequestParam Integer objid){
+    @GetMapping("/users")
+    public ResponseEntity getOneCustomer(@RequestParam BigInteger objectId){
         try {
-            return ResponseEntity.ok(customerService.getOne(objid));
+            return ResponseEntity.ok(customerService.getOne(objectId));
         }catch (CustomerNotFoundException exception){
             return ResponseEntity.badRequest().body(exception.getMessage());
         } catch (Exception exception){

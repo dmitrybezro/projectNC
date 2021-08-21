@@ -1,4 +1,4 @@
-package com.bankNC.entity.forTables;
+package com.bankNC.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+import java.math.BigInteger;
 import java.sql.Date;
 
 @Getter
@@ -18,20 +19,24 @@ public class ObjectDto {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_obj")
     @SequenceGenerator(name = "seq_obj", sequenceName = "seq_obj", allocationSize = 1)
     @Column(name = "obj_id")
-    private Integer objId;
+    private BigInteger objectId;
 
     @Column(name = "par_id")
-    private Integer parId;
+    private BigInteger parentId;
 
     @Column(name = "obj_type")
-    private Integer objType;
+    private Integer objectType;
 
     @Column(name = "obj_name")
-    private String objName;
-
+    private String objectName;
 
     @Column(name = "obj_doc")
-    private Date objDoc;
+    private Date objectDoc;
+
+    public ObjectDto(BigInteger id, String name){
+        this.objectId = id;
+        this.objectName = name;
+    }
 
     public ObjectDto(){
     }

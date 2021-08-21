@@ -1,9 +1,10 @@
-package com.bankNC.entity.forTables;
+package com.bankNC.dto;
 
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigInteger;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,14 +16,14 @@ import java.io.Serializable;
 public class ValueDto implements Serializable {
     @Id
     @Column(name = "obj_id")
-    private Integer objid;
+    private BigInteger objectId;
 
     @Id
     @Column(name = "attr_id")
-    private Integer attrId;
+    private BigInteger attributeId;
 
     @Column(name = "param_val")
-    private String param_val;
+    private String parameterValue;
 }
 
 @AllArgsConstructor
@@ -32,9 +33,9 @@ public class ValueDto implements Serializable {
 class ValueKey implements Serializable {
     @Getter
     @Setter
-    private Integer objid;
+    private BigInteger objectId;
 
     @Getter
     @Setter
-    private Integer attrId;
+    private BigInteger attributeId;
 }

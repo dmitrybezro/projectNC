@@ -1,9 +1,10 @@
 package com.bankNC.repository;
 
-import com.bankNC.entity.forTables.ObjectDto;
+import com.bankNC.dto.ObjectDto;
 import org.springframework.data.repository.CrudRepository;
 
-public interface ObjectsRepository extends CrudRepository<ObjectDto, Integer> {
-    @Override
-    long count();
+import java.math.BigInteger;
+
+public interface ObjectsRepository extends CrudRepository<ObjectDto, BigInteger> {
+    ObjectDto findByObjectId(BigInteger objectId);
 }
