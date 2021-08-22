@@ -5,37 +5,71 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.boot.context.properties.ConstructorBinding;
 
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class Customer extends BaseEntity{
+    @Getter
+    @Setter
     @Attribute("1")
     private String firstName;
 
+    @Getter
+    @Setter
     @Attribute("2")
     private String lastName;
 
+    @Getter
+    @Setter
     @Attribute("3")
     private String patronymic;
 
+    @Getter
+    @Setter
     @Attribute("4")
     private String datOfBirth;
 
+    @Getter
+    @Setter
     @Attribute("5")
     private Integer numberAccount;
 
+    @Getter
+    @Setter
     private List<Account> listAccount;
+
+    @Setter
+    @Getter
+    private Map<String, Double> totalBalance;
+
     {
         listAccount = new ArrayList<>();
+        totalBalance = new HashMap<>();
+        totalBalance.put("RUB", 0.0);
+        totalBalance.put("USD", 0.0);
+        totalBalance.put("EUR", 0.0);
+    }
+
+    private Map<String, Double> upTotalBalance(){
+
+        for(int i = 0; i < listAccount.size(); i++){
+            switch (listAccount.get(i).getCurrency()){
+                case "RUB":
+                    totalBalance.put("RUB", totalBalance.get("RUB") + listAccount.get(i).getBalance());
+                    break;
+                case "USD":
+                    totalBalance.put("USD", totalBalance.get("USD") + listAccount.get(i).getBalance());
+                    break;
+                case "EUR":
+                    totalBalance.put("EUR", totalBalance.get("EUR") + listAccount.get(i).getBalance());
+                    break;
+            }
+        }
+
+        return this.totalBalance;
     }
 
     @Override

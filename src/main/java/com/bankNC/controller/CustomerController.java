@@ -27,14 +27,14 @@ public class CustomerController {
         }
     }*/
 
-    @GetMapping("/users")
+/*    @GetMapping("/users")
     public ResponseEntity getUsers() {
         try {
             return ResponseEntity.ok("Сервер работает");
         }catch (Exception exception){
             return ResponseEntity.badRequest().body("Произошла ошибка");
         }
-    }
+    }*/
 
     @GetMapping("/users")
     public ResponseEntity getOneCustomer(@RequestParam BigInteger objectId){

@@ -25,17 +25,6 @@ public class CustomerService {
     @Autowired
     private ValuesRepository valueRepository;
 
-/*    public void AddCustomer(Customer customer){
-        ObjectDto objectDto = CustomerTo.splitObject(customer);
-        List<ValueDto> listValue = CustomerTo.splitValues(customer, 1010+
-                (int)objectsRepository.count());
-
-        objectsRepository.save(objectDto);
-        for(int i = 0 ; i < 4; i++){
-            valueRepository.save(listValue.get(i));
-        }
-    }*/
-
     public Customer getOne(BigInteger objectId) throws CustomerNotFoundException, IllegalAccessException, InstantiationException {
 
         ObjectDto objectDto = objectsRepository.findByObjectId(objectId);
@@ -46,12 +35,10 @@ public class CustomerService {
         if(listAttr.size() == 0){
             throw new CustomerNotFoundException("Пользователь не найден");
         }
-
-        //  Нужно собрать кастомера
-       // EntityDtoConverter.Pair<ObjectDto, List<ValueDto>> dtos = new EntityDtoConverter.Pair<>(objectDto, listAttr);
-        Customer customer = EntityDtoConverter.toEntity(new EntityDtoConverter.Pair<ObjectDto, List<ValueDto>>(objectDto, listAttr), Customer.class);
+        Customer customer = new Customer();
+        customer = EntityDtoConverter.toEntity(new EntityDtoConverter.Pair<ObjectDto, List<ValueDto>>(objectDto, listAttr), Customer.class);
+        customer.setName("Customer");
 
         return customer;
     }
-
 }
