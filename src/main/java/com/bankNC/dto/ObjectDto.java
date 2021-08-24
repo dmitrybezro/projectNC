@@ -38,6 +38,13 @@ public class ObjectDto {
         this.objectName = name;
     }
 
+    public ObjectDto(ObjectDto objectDto){
+        this.parentId = objectDto.parentId;
+        this.objectType = objectDto.objectType;
+        this.objectName = objectDto.objectName;
+        this.objectDoc = objectDto.objectDoc;
+    }
+
     public ObjectDto(){
     }
 }

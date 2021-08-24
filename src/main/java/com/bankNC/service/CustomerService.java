@@ -25,6 +25,11 @@ public class CustomerService {
     @Autowired
     private ValuesRepository valueRepository;
 
+    public void AddCustomer(Customer customer) throws IllegalAccessException {
+        objectsRepository.save(EntityDtoConverter.toDto(customer).getKey());
+        valueRepository.saveAll(EntityDtoConverter.toDto(customer).getValue());
+    }
+
     public Customer getOne(BigInteger objectId) throws CustomerNotFoundException, IllegalAccessException, InstantiationException {
 
         ObjectDto objectDto = objectsRepository.findByObjectId(objectId);

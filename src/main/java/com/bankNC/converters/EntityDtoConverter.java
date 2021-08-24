@@ -4,6 +4,8 @@ import com.bankNC.annotations.Attribute;
 import com.bankNC.dto.ObjectDto;
 import com.bankNC.dto.ValueDto;
 import com.bankNC.entity.BaseEntity;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
@@ -91,6 +93,8 @@ public class EntityDtoConverter {
         return filteredFields;
     }
 
+    @Getter
+    @Setter
     public static class Pair<K, V> {
         private final K key;
         private final V value;
