@@ -13,13 +13,14 @@ import java.math.BigInteger;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransferRequestModel {
-    private BigInteger idTransaction;
-    private String status;
-    private String errorMessage;
+public class TransferRequestIn {
+    private BigInteger idAccountSend;
+    private BigInteger idAccountReceive;
+    private Double sum;
 
-    public TransferRequestModel(BigInteger idTransaction, String status){
+
+/*    public TransferRequestIn(BigInteger idAccountSend, BigInteger idAccountReceive, Double sum){
         this.idTransaction = idTransaction;
         this.status = status;
-    }
+    }*/
 }
