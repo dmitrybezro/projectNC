@@ -38,15 +38,15 @@ public class EntityDtoConverter {
         return new Pair<>(objectDto, paramList);
     }
 
-    public static <T extends BaseEntity> T toEntity(Pair<ObjectDto, List<ValueDto>> params, Class<T> clazz) throws IllegalAccessException, InstantiationException {
+    public static <T extends BaseEntity> T toEntity(ObjectDto objectDto, List<ValueDto> listValue, Class<T> clazz) throws IllegalAccessException, InstantiationException {
         T entity = clazz.newInstance();
-        entity.setId(params.key.getObjectId());
-        entity.setName(params.key.getObjectName());
+        entity.setId(objectDto.getObjectId());
+        entity.setName(objectDto.getObjectName());
 
         List<Field> fieldList = getClassFields(clazz);
         HashMap<BigInteger, Field> filteredFields = getFieldsWithAttribute(fieldList);
 
-        for(ValueDto param : params.value){
+        for(ValueDto param : listValue){
             Field field = filteredFields.get(param.getAttributeId());
             if(field == null){
                 continue;
