@@ -6,10 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 public class Account extends BaseEntity{
@@ -24,12 +20,6 @@ public class Account extends BaseEntity{
     @Getter@Setter
     @Attribute("8")
     private String dataOpen;
-
-    private List<Operation> listOperation;
-
-    {
-        listOperation = new ArrayList<>();
-    }
 
     public Account(Account account){
 

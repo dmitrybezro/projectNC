@@ -4,10 +4,11 @@ import com.bankNC.converters.EntityDtoConverter;
 import com.bankNC.dto.ObjectDto;
 import com.bankNC.dto.ValueDto;
 import com.bankNC.entity.Account;
-import com.bankNC.entity.Operation;
+import com.bankNC.entity.Task;
+import com.bankNC.entity.Transaction;
 import com.bankNC.exception.AccountNotFoundException;
 import com.bankNC.exception.NegativeAccountBalanceException;
-import com.bankNC.model.TransferRequestModel;
+import com.bankNC.model.TransferRequestIn;
 import com.bankNC.repository.ObjectsRepository;
 import com.bankNC.repository.ValuesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class AccountService {
     @Autowired
     private ValuesRepository valueRepository;
 
+    @Autowired
+    private EntityService entityService;
+
     public Account getGeneralInfo(BigInteger id) throws AccountNotFoundException, IllegalAccessException, InstantiationException {
 
         ObjectDto objectDto = objectsRepository.findByObjectId(id);
@@ -38,215 +42,104 @@ public class AccountService {
             throw new AccountNotFoundException("Счет не найден");
         }
 
-        Account account = new Account();
-        account = EntityDtoConverter.toEntity(new EntityDtoConverter.Pair<ObjectDto, List<ValueDto>>(objectDto, listAttr), Account.class);
+        Account account = EntityDtoConverter.toEntity(objectDto, listAttr, Account.class);
         account.setName("Account");
         return account;
     }
 
-    public List<Operation> getTransferInfo(BigInteger id, Date start_date,
-                                           Date end_date, Integer page, Integer items) throws AccountNotFoundException, IllegalAccessException, InstantiationException{
-
-        List<ObjectDto> listOperationsDto = objectsRepository.findByParentId(id);
-
-        if(listOperationsDto.size() == 0){
-            throw new AccountNotFoundException("Счёт не найден");
-        }
-
-        List<List<ValueDto>> listAttributes = new ArrayList<>();
-        List<Operation> listOperationsAll = new ArrayList<>();
-        for(int i = 0; i < listOperationsDto.size(); i++){
-            listAttributes.add(valueRepository.findAllByObjectId(id));
-            Operation operation = EntityDtoConverter.toEntity(new EntityDtoConverter.Pair<ObjectDto, List<ValueDto>>(listOperationsDto.get(i), listAttributes.get(i)), Operation.class);
-            listOperationsAll.add(operation);
-        }
-
-        List<Operation> listOperations = new ArrayList<>();
-        for(int i = 0; i < listOperationsAll.size(); i++){
-            Date date = listOperationsAll.get(i).getDataOperation();
-            if(date.after(start_date) && date.before(end_date)){
-                listOperations.add(listOperationsAll.get(i));
-            }
-        }
+    public List<Transaction> getList(BigInteger id, Date start_date,
+                                           Date end_date, Integer page, Integer items) throws IllegalAccessException, InstantiationException{
 
         PageRequest pageRequest = PageRequest.of(page, items);
+        Page<ObjectDto> pageDto = objectsRepository.findByParentIdAndObjectTypeAndObjectDocBetween(id, 4, start_date, end_date, pageRequest);
 
-        Integer start = (int)pageRequest.getOffset();
-        Integer end = (int)(start + pageRequest.getPageSize()) > listOperations.size()?
-                                    listOperations.size():start + pageRequest.getPageSize();
-        Page<Operation> toReturn = new PageImpl<>(listOperations.subList(start, end), pageRequest, listOperations.size());
-        return toReturn.getContent();
+        List<Transaction> transactionsList = new ArrayList<>();
+        for(ObjectDto object: pageDto){
+            transactionsList.add(entityService.getById(object.getObjectId(),Transaction.class));
+        }
+        return transactionsList;
     }
 
-    //  Привести в божеский вид, но работает, как хотелось бы
-    @Transactional(noRollbackFor = {AccountNotFoundException.class, NegativeAccountBalanceException.class} )
-    public TransferRequestModel transfer(Operation operation)throws AccountNotFoundException, NegativeAccountBalanceException, IllegalAccessException, InstantiationException{
+   public Task transfer(TransferRequestIn input)throws AccountNotFoundException, NegativeAccountBalanceException, IllegalAccessException, InstantiationException{
 
-        BigInteger idAccountSend = operation.getIdAccountSend();
-        BigInteger idAccountReceive = operation.getIdAccountReceive();
-        BigInteger idTransaction = operation.getId();
+        BigInteger idAccountSend = input.getIdAccountSend();
+        BigInteger idAccountReceive = input.getIdAccountReceive();
+        Double transferAmount = input.getSum();
 
-        Operation transfer = new Operation(idAccountSend, idAccountReceive, "New",
-                operation.getTransferAmount(), null, null);
-        ObjectDto objectDtoOperation = EntityDtoConverter.toDto(transfer).getKey();
-        objectsRepository.save(objectDtoOperation);
-        List<ValueDto> listValueOperation = EntityDtoConverter.toDto(transfer).getValue();
-        for(int i = 0; i < listValueOperation.size(); i++){
-            listValueOperation.get(i).setObjectId(objectDtoOperation.getObjectId());
-        }
-        valueRepository.saveAll(listValueOperation);
+        //  Create task
+        Task currentTask = new Task(idAccountSend, idAccountReceive, "New", transferAmount);
+        BigInteger idTask = entityService.saveEntity(currentTask);
 
-        //  Организовать проверку, что это счет пользователя
-
-        ObjectDto objectDtoSend = objectsRepository.findByObjectId(idAccountSend);
-        List<ValueDto> listValueSend = valueRepository.findAllByObjectId(idAccountSend);
-        if(listValueSend.size() == 0){
-            String message = "Счет отправитель не существует";
-            transfer.setMessage(message);
-            transfer.setStatus("Error");
-            ObjectDto objectDto = EntityDtoConverter.toDto(transfer).getKey();
-            objectDto.setObjectId(objectDtoOperation.getObjectId());
-            objectDto.setObjectName("operation");
-            objectsRepository.save(objectDto);
-            listValueOperation = EntityDtoConverter.toDto(transfer).getValue();
-            for(int i = 0; i < listValueOperation.size(); i++){
-                listValueOperation.get(i).setObjectId(objectDtoOperation.getObjectId());
-            }
-            valueRepository.saveAll(listValueOperation);
-            throw new AccountNotFoundException(message, idTransaction);
-
-        }
-        Account accountSend = EntityDtoConverter.toEntity(new EntityDtoConverter.Pair<ObjectDto, List<ValueDto>>(objectDtoSend, listValueSend), Account.class);
-
-        if(accountSend.getBalance() < operation.getTransferAmount()){
-            String message = "На счете недостаточно средств";
-            transfer.setMessage(message);
-            transfer.setStatus("Error");
-            ObjectDto objectDto = EntityDtoConverter.toDto(transfer).getKey();
-            objectDto.setObjectId(objectDtoOperation.getObjectId());
-            objectDto.setObjectName("operation");
-            objectsRepository.save(objectDto);
-            listValueOperation = EntityDtoConverter.toDto(transfer).getValue();
-            for(int i = 0; i < listValueOperation.size(); i++){
-                listValueOperation.get(i).setObjectId(objectDtoOperation.getObjectId());
-            }
-            valueRepository.saveAll(listValueOperation);
-            throw new NegativeAccountBalanceException(message, idTransaction);
+        //  Build account send
+        Account accountSend = entityService.getById(idAccountSend, Account.class);
+        if(accountSend.getBalance() < transferAmount){
+            throw new NegativeAccountBalanceException("There are not enough funds on the account");
         }
 
-        ObjectDto objectDtoReceive = objectsRepository.findByObjectId(idAccountReceive);
-        List<ValueDto> listValueReceive = valueRepository.findAllByObjectId(idAccountReceive);
-        if(listValueReceive.size() == 0){
-            String message = "Принимающий счет не существует";
-            transfer.setMessage(message);
-            transfer.setStatus("Error");
-            ObjectDto objectDto = EntityDtoConverter.toDto(transfer).getKey();
-            objectDto.setObjectId(objectDtoOperation.getObjectId());
-            objectDto.setObjectName("operation");
-            objectsRepository.save(objectDto);
-            listValueOperation = EntityDtoConverter.toDto(transfer).getValue();
-            for(int i = 0; i < listValueOperation.size(); i++){
-                listValueOperation.get(i).setObjectId(objectDtoOperation.getObjectId());
-            }
-            valueRepository.saveAll(listValueOperation);
-            throw new AccountNotFoundException(message, idTransaction);
-        }
-        Account accountReceive = EntityDtoConverter.toEntity(new EntityDtoConverter.Pair<ObjectDto, List<ValueDto>>(objectDtoReceive, listValueReceive), Account.class);
+        //  Build account receive
+        Account accountReceive = entityService.getById(idAccountReceive, Account.class);
 
-        Account draftAccount = new Account(accountSend);
-        ObjectDto objectDtoDraft = new ObjectDto(objectDtoSend);
+        //  Build account draft
+        Account accountDraft = entityService.getByParentId(idAccountSend, Account.class);
 
-        objectsRepository.save(objectDtoDraft);
-        List<ValueDto> listValueDraft = EntityDtoConverter.toDto(draftAccount).getValue();
-        for(int i = 0; i < listValueDraft.size(); i++){
-            listValueDraft.get(i).setObjectId(objectDtoDraft.getObjectId());
-            valueRepository.save(listValueDraft.get(i));
+        Task returnedTask = new Task("New", "");
+        returnedTask.setId(currentTask.getId());
+
+        String errorMessage = transferAttempt(accountSend, accountReceive, accountDraft, transferAmount);
+
+        if(errorMessage.equals("")) {
+            currentTask.setStatus("Success");
+            entityService.saveEntity(currentTask);
+
+            entityService.saveTransaction(new Transaction("OUT", transferAmount, new Date()), idAccountSend);
+            entityService.saveTransaction(new Transaction("IN", transferAmount, new Date()), idAccountReceive);
+
+        } else{
+            currentTask.setStatus("Error");
+            entityService.saveEntity(currentTask);
+
+            returnedTask.setStatus("Error");
+            returnedTask.setErrorMessage(errorMessage);
         }
 
-        //  Уменьшили баланс на счете отправителе
-        accountSend.setBalance(accountSend.getBalance() - operation.getTransferAmount());
-        objectDtoSend = EntityDtoConverter.toDto(accountSend).getKey();
-        listValueSend = EntityDtoConverter.toDto(accountSend).getValue();
-        objectsRepository.save(objectDtoSend);
-        valueRepository.saveAll(listValueSend);
+       return returnedTask;
+    }
 
+    @Transactional
+    private String transferAttempt(Account accountSend, Account accountReceive,
+                                    Account accountDraft, Double transferAmount) throws IllegalAccessException {
 
-        //  В процессе
-        transfer.setStatus("InProgress");
-        ObjectDto objectDto = EntityDtoConverter.toDto(transfer).getKey();
-        objectDto.setObjectId(objectDtoOperation.getObjectId());
-        objectDto.setObjectName("operation");
-        objectsRepository.save(objectDto);
-        listValueOperation = EntityDtoConverter.toDto(transfer).getValue();
-        for (ValueDto valueDto : listValueOperation) {
-            valueDto.setObjectId(objectDtoOperation.getObjectId());
-        }
-        valueRepository.saveAll(listValueOperation);
+        //  Reduce balance on sender`s account
+        accountSend.setBalance(accountSend.getBalance() - transferAmount);
+        entityService.saveEntity(accountSend);
 
+        String message = "";
 
         for(int attempt = 1; attempt <= 3; attempt++) {
             try {
-                draftAccount.setBalance(draftAccount.getBalance() - operation.getTransferAmount());
-                ObjectDto objectDtoDraft1 = EntityDtoConverter.toDto(draftAccount).getKey();
-                List<ValueDto> listValueDraft1 = EntityDtoConverter.toDto(draftAccount).getValue();
-                objectsRepository.save(objectDtoDraft1);
-                for(int i = 0; i < listValueDraft1.size(); i++){
-                    listValueDraft1.get(i).setObjectId(objectDtoDraft1.getObjectId());
-                }
-                valueRepository.saveAll(listValueDraft1);
+                //  Increase balance on draft`s account
+                accountDraft.setBalance(accountDraft.getBalance() - transferAmount);
+                entityService.saveEntity(accountDraft);
 
+                //  Reduce balance on receive`s account
+                accountReceive.setBalance(accountReceive.getBalance() + transferAmount);
+                entityService.saveEntity(accountReceive);
 
-                accountReceive.setBalance(accountReceive.getBalance() + operation.getTransferAmount());
-                objectDtoReceive = EntityDtoConverter.toDto(accountReceive).getKey();
-                listValueReceive = EntityDtoConverter.toDto(accountReceive).getValue();
-                objectsRepository.save(objectDtoReceive);
-                valueRepository.saveAll(listValueReceive);
-
-                valueRepository.deleteAll(listValueDraft1);
-                objectsRepository.delete(objectDtoDraft1);
-
-                break;
+                return message;
             } catch (Exception e) {
                 if(attempt == 3){
                     TransactionAspectSupport.currentTransactionStatus()
                             .setRollbackOnly();
-                    return new TransferRequestModel(idTransaction, "Error", e.getMessage());
+                    message = e.getMessage();
                 }
-
-
             }
         }
-
-        //  Завершена
-        transfer.setStatus("Success");
-        ObjectDto objectDto1 = EntityDtoConverter.toDto(transfer).getKey();
-        objectDto1.setObjectId(objectDtoOperation.getObjectId());
-        objectDto1.setObjectName("operation");
-        objectsRepository.save(objectDto1);
-        listValueOperation = EntityDtoConverter.toDto(transfer).getValue();
-        for(int i = 0; i < listValueOperation.size(); i++){
-            listValueOperation.get(i).setObjectId(objectDtoOperation.getObjectId());
-        }
-        valueRepository.saveAll(listValueOperation);
-
-        valueRepository.deleteAll(listValueDraft);
-        objectsRepository.delete(objectDtoDraft);
-        return new TransferRequestModel(idTransaction, "New");
+        return message;
     }
-
-    public TransferRequestModel getTransactionInfo(BigInteger id)
+    public Task getTransactionInfo(BigInteger id)
             throws NegativeAccountBalanceException,  IllegalAccessException,
                 InstantiationException {
-        ObjectDto objectDto = objectsRepository.findByObjectId(id);
-        List<ValueDto> listValueOperation = valueRepository.findAllByObjectId(id);
 
-        if(listValueOperation.size() == 0 ){
-            throw new NegativeAccountBalanceException(" Lol " );
-        }
-
-        Operation operation = EntityDtoConverter.toEntity(
-                new EntityDtoConverter.Pair<ObjectDto, List<ValueDto>>
-                (objectDto, listValueOperation), Operation.class);
-        return new TransferRequestModel(id, operation.getStatus(),  operation.getMessage());
+        return  entityService.getById(id, Task.class);
     }
 }

@@ -17,10 +17,4 @@ public class TransferRequestIn {
     private BigInteger idAccountSend;
     private BigInteger idAccountReceive;
     private Double sum;
-
-
-/*    public TransferRequestIn(BigInteger idAccountSend, BigInteger idAccountReceive, Double sum){
-        this.idTransaction = idTransaction;
-        this.status = status;
-    }*/
 }

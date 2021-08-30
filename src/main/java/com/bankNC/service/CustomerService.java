@@ -41,7 +41,7 @@ public class CustomerService {
             throw new CustomerNotFoundException("Пользователь не найден");
         }
         Customer customer = new Customer();
-        customer = EntityDtoConverter.toEntity(new EntityDtoConverter.Pair<ObjectDto, List<ValueDto>>(objectDto, listAttr), Customer.class);
+        customer = EntityDtoConverter.toEntity(objectDto, listAttr, Customer.class);
         customer.setName("Customer");
 
         return customer;
