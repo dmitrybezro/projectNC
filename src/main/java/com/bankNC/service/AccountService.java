@@ -67,7 +67,7 @@ public class AccountService {
         Double transferAmount = input.getSum();
 
         //  Create task
-        Task currentTask = new Task(idAccountSend, idAccountReceive, "New", transferAmount);
+        Task currentTask = new Task(idAccountSend, idAccountReceive, "Lilu", transferAmount);
         BigInteger idTask = entityService.saveEntity(currentTask);
 
         //  Build account send
@@ -83,11 +83,12 @@ public class AccountService {
         Account accountDraft = entityService.getByParentId(idAccountSend, Account.class);
 
         Task returnedTask = new Task("New", "");
-        returnedTask.setId(currentTask.getId());
+        returnedTask.setId(idTask);
 
         String errorMessage = transferAttempt(accountSend, accountReceive, accountDraft, transferAmount);
 
         if(errorMessage.equals("")) {
+
             currentTask.setStatus("Success");
             entityService.saveEntity(currentTask);
 
@@ -107,11 +108,12 @@ public class AccountService {
 
     @Transactional
     private String transferAttempt(Account accountSend, Account accountReceive,
-                                    Account accountDraft, Double transferAmount) throws IllegalAccessException {
+                                    Account accountDraft, Double transferAmount) throws IllegalAccessException, NegativeAccountBalanceException {
 
         //  Reduce balance on sender`s account
         accountSend.setBalance(accountSend.getBalance() - transferAmount);
-        entityService.saveEntity(accountSend);
+        //  Где-то здесь косяк
+        entityService.updateEntity(accountSend);
 
         String message = "";
 
@@ -119,11 +121,11 @@ public class AccountService {
             try {
                 //  Increase balance on draft`s account
                 accountDraft.setBalance(accountDraft.getBalance() - transferAmount);
-                entityService.saveEntity(accountDraft);
+                entityService.updateEntity(accountDraft);
 
                 //  Reduce balance on receive`s account
                 accountReceive.setBalance(accountReceive.getBalance() + transferAmount);
-                entityService.saveEntity(accountReceive);
+                entityService.updateEntity(accountReceive);
 
                 return message;
             } catch (Exception e) {
@@ -137,7 +139,7 @@ public class AccountService {
         return message;
     }
     public Task getTransactionInfo(BigInteger id)
-            throws NegativeAccountBalanceException,  IllegalAccessException,
+            throws IllegalAccessException,
                 InstantiationException {
 
         return  entityService.getById(id, Task.class);

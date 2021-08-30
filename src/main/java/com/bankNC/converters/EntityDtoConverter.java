@@ -51,7 +51,7 @@ public class EntityDtoConverter {
             if(field == null){
                 continue;
             }
-
+            //  Какой-то косячок
             PropertyEditor editor = PropertyEditorManager.findEditor(field.getType());
             editor.setAsText(param.getParameterValue());
             field.setAccessible(true);

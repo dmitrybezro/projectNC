@@ -12,17 +12,17 @@ import java.math.BigInteger;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Task extends BaseEntity{
-
+    @Setter
     @Attribute("9")
     private BigInteger idAccountSend;
-
+    @Setter
     @Attribute("10")
     private BigInteger idAccountReceive;
     @Setter
     @Getter
     @Attribute("11")
     private String status;
-
+    @Setter
     @Attribute("12")
     private Double transferAmount;
     @Setter
@@ -41,5 +41,4 @@ public class Task extends BaseEntity{
         this.status = status;
         this.errorMessage = errorMessage;
     }
-
 }

@@ -2,13 +2,21 @@ package com.bankNC.entity;
 
 import com.bankNC.annotations.Attribute;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
+@NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Getter
 public class Transaction extends BaseEntity{
+    @Attribute("14")
     private String type;
-    @Attribute("12")
-    private Double transferAmount;
-    @Attribute("13")
+    @Attribute("15")
+    private Double payment;
+    @Attribute("16")
     private Date dateTransaction;
+
 }
