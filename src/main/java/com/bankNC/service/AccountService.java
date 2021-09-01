@@ -67,7 +67,7 @@ public class AccountService {
         Double transferAmount = input.getSum();
 
         //  Create task
-        Task currentTask = new Task(idAccountSend, idAccountReceive, "Lilu", transferAmount);
+        Task currentTask = new Task(idAccountSend, idAccountReceive, "New", transferAmount);
         BigInteger idTask = entityService.saveEntity(currentTask);
 
         //  Build account send

@@ -13,7 +13,13 @@ import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.*;
 
+import griffon.core.editors.BigIntegerPropertyEditor;
+
 public class EntityDtoConverter {
+    static{
+        PropertyEditorManager.registerEditor(BigInteger.class, BigIntegerPropertyEditor.class);
+    }
+
     public static <T extends BaseEntity> Pair<ObjectDto, List<ValueDto>> toDto(T entity) throws IllegalAccessException {
         ObjectDto objectDto = new ObjectDto(
                 entity.getId(),
@@ -53,6 +59,9 @@ public class EntityDtoConverter {
             }
             //  Какой-то косячок
             PropertyEditor editor = PropertyEditorManager.findEditor(field.getType());
+            if(editor ==null){
+                throw new RuntimeException("" + param.getAttributeId() + " " + param.getParameterValue());
+            }
             editor.setAsText(param.getParameterValue());
             field.setAccessible(true);
             field.set(entity, editor.getValue());

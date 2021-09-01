@@ -87,6 +87,11 @@
             <artifactId>jaxb-api</artifactId>
             <version>2.3.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.griffon</groupId>
+            <artifactId>griffon-core</artifactId>
+            <version>2.15.1</version>
+        </dependency>
 
     </dependencies>
 
