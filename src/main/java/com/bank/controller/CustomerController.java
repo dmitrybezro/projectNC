@@ -18,33 +18,8 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    @PostMapping("/save")
-    public ResponseEntity save(@RequestBody Customer customer){
-        try {
-            customerService.AddCustomer(customer);
-            return ResponseEntity.ok("Объект сохранен " );
-        }catch (Exception exception){
-            return ResponseEntity.badRequest().body(exception.getMessage());
-        }
-    }
-
-/*    @GetMapping("/users")
-    public ResponseEntity getUsers() {
-        try {
-            return ResponseEntity.ok("Сервер работает");
-        }catch (Exception exception){
-            return ResponseEntity.badRequest().body("Произошла ошибка");
-        }
-    }*/
-
     @GetMapping("/users")
-    public ResponseEntity getOneCustomer(@RequestParam BigInteger objectId){
-        try {
+    public ResponseEntity<Customer> getOneCustomer(@RequestParam BigInteger objectId) throws CustomerNotFoundException, IllegalAccessException, InstantiationException {
             return ResponseEntity.ok(customerService.getOne(objectId));
-        }catch (CustomerNotFoundException exception){
-            return ResponseEntity.badRequest().body(exception.getMessage());
-        } catch (Exception exception){
-        return ResponseEntity.badRequest().body(exception.getMessage());
-        }
     }
 }
