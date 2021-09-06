@@ -1,6 +1,6 @@
-package com.bankNC.entity;
+package com.bank.entity;
 
-import com.bankNC.annotations.Attribute;
+import com.bank.annotations.Attribute;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.bankNC.model;
+package com.bank.model;
 
 import lombok.AllArgsConstructor;
 

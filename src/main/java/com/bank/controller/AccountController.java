@@ -1,11 +1,10 @@
-package com.bankNC.controller;
+package com.bank.controller;
 
-import com.bankNC.entity.Task;
-import com.bankNC.entity.Transaction;
-import com.bankNC.exception.AccountNotFoundException;
-import com.bankNC.exception.NegativeAccountBalanceException;
-import com.bankNC.model.TransferRequestIn;
-import com.bankNC.service.AccountService;
+import com.bank.entity.Account;
+import com.bank.entity.Transaction;
+import com.bank.exception.AccountNotFoundException;
+import com.bank.model.TransferRequestIn;
+import com.bank.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +22,14 @@ public class AccountController {
     AccountService accountService;
 
     @GetMapping("/account/{id}")
-    public ResponseEntity getOneAccount(@PathVariable BigInteger id){
-        try {
+    public ResponseEntity<Account> getOneAccount(@PathVariable BigInteger id) throws AccountNotFoundException, IllegalAccessException, InstantiationException {
+      //  try {
             return ResponseEntity.ok(accountService.getGeneralInfo(id));
-        }catch (AccountNotFoundException exception){
+/*        }catch (AccountNotFoundException exception){
             return ResponseEntity.badRequest().body(exception.getMessage());
         } catch (Exception exception){
             return ResponseEntity.badRequest().body(exception.getMessage());
-        }
+        }*/
     }
 
     @GetMapping("/account/{id}/operations")

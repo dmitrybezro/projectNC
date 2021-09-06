@@ -1,4 +1,4 @@
-package com.bankNC.dto;
+package com.bank.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

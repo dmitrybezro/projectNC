@@ -1,10 +1,10 @@
-package com.bankNC.controller;
+package com.bank.controller;
 
 /*import com.bankNC.converters.CustomerTo;*/
 
-import com.bankNC.entity.Customer;
-import com.bankNC.exception.CustomerNotFoundException;
-import com.bankNC.service.CustomerService;
+import com.bank.entity.Customer;
+import com.bank.exception.CustomerNotFoundException;
+import com.bank.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

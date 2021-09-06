@@ -1,4 +1,4 @@
-package com.bankNC.exception;
+package com.bank.exception;
 
 public class NegativeAccountBalanceException extends Exception{
     public NegativeAccountBalanceException(String message) {

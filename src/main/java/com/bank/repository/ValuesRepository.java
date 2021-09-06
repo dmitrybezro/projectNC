@@ -1,6 +1,6 @@
-package com.bankNC.repository;
+package com.bank.repository;
 
-import com.bankNC.dto.ValueDto;
+import com.bank.dto.ValueDto;
 import org.springframework.data.repository.CrudRepository;
 
 import java.math.BigInteger;

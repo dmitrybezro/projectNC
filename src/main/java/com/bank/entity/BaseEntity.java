@@ -1,4 +1,4 @@
-package com.bankNC.entity;
+package com.bank.entity;
 
 import java.math.BigInteger;
 import java.util.Objects;

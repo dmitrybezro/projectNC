@@ -1,9 +1,9 @@
-package com.bankNC.converters;
+package com.bank.converters;
 
-import com.bankNC.annotations.Attribute;
-import com.bankNC.dto.ObjectDto;
-import com.bankNC.dto.ValueDto;
-import com.bankNC.entity.BaseEntity;
+import com.bank.annotations.Attribute;
+import com.bank.dto.ObjectDto;
+import com.bank.dto.ValueDto;
+import com.bank.entity.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 

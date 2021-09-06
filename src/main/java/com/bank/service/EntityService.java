@@ -1,17 +1,15 @@
-package com.bankNC.service;
+package com.bank.service;
 
-import com.bankNC.converters.EntityDtoConverter;
-import com.bankNC.dto.ObjectDto;
-import com.bankNC.dto.ValueDto;
-import com.bankNC.entity.Account;
-import com.bankNC.entity.BaseEntity;
-import com.bankNC.entity.Transaction;
-import com.bankNC.exception.NegativeAccountBalanceException;
-import com.bankNC.repository.ObjectsRepository;
-import com.bankNC.repository.ValuesRepository;
+import com.bank.converters.EntityDtoConverter;
+import com.bank.dto.ObjectDto;
+import com.bank.dto.ValueDto;
+import com.bank.entity.BaseEntity;
+import com.bank.entity.Transaction;
+import com.bank.exception.NegativeAccountBalanceException;
+import com.bank.repository.ObjectsRepository;
+import com.bank.repository.ValuesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.List;

@@ -1,16 +1,16 @@
-package com.bankNC.service;
+package com.bank.service;
 
 /*import com.bankNC.converters.CustomerTo;*/
-import com.bankNC.converters.EntityDtoConverter;
-import com.bankNC.dto.ObjectDto;
-import com.bankNC.entity.Customer;
-import com.bankNC.dto.ValueDto;
-import com.bankNC.exception.CustomerNotFoundException;
+import com.bank.converters.EntityDtoConverter;
+import com.bank.dto.ObjectDto;
+import com.bank.entity.Customer;
+import com.bank.dto.ValueDto;
+import com.bank.exception.CustomerNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.bankNC.repository.ObjectsRepository;
-import com.bankNC.repository.ValuesRepository;
+import com.bank.repository.ObjectsRepository;
+import com.bank.repository.ValuesRepository;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
