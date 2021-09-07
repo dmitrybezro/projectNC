@@ -23,25 +23,10 @@ public class CustomerService {
     @Autowired
     private ValuesRepository valueRepository;
 
-    public void AddCustomer(Customer customer) throws IllegalAccessException {
-        objectsRepository.save(EntityDtoConverter.toDto(customer).getKey());
-        valueRepository.saveAll(EntityDtoConverter.toDto(customer).getValue());
-    }
+    @Autowired
+    private EntityService entityService;
 
     public Customer getOne(BigInteger objectId) throws CustomerNotFoundException, IllegalAccessException, InstantiationException {
-
-        ObjectDto objectDto = objectsRepository.findByObjectId(objectId);
-        List<ValueDto> listAttr = new ArrayList<>();
-
-        listAttr = valueRepository.findAllByObjectId(objectId);
-
-        if(listAttr.size() == 0){
-            throw new CustomerNotFoundException("Пользователь не найден");
-        }
-        Customer customer = new Customer();
-        customer = EntityDtoConverter.toEntity(objectDto, listAttr, Customer.class);
-        customer.setName("Customer");
-
-        return customer;
+        return entityService.getById(objectId, Customer.class);
     }
 }
