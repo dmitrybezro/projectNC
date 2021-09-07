@@ -4,6 +4,7 @@ import com.bank.annotations.Attribute;
 import com.bank.dto.ObjectDto;
 import com.bank.dto.ValueDto;
 import com.bank.entity.BaseEntity;
+import griffon.core.editors.DoublePropertyEditor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +19,7 @@ import griffon.core.editors.BigIntegerPropertyEditor;
 public class EntityDtoConverter {
     static{
         PropertyEditorManager.registerEditor(BigInteger.class, BigIntegerPropertyEditor.class);
+        PropertyEditorManager.registerEditor(Double.class, DoublePropertyEditor.class);
     }
 
     public static <T extends BaseEntity> Pair<ObjectDto, List<ValueDto>> toDto(T entity) throws IllegalAccessException {

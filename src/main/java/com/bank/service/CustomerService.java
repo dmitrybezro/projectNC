@@ -1,6 +1,5 @@
 package com.bank.service;
 
-/*import com.bankNC.converters.CustomerTo;*/
 import com.bank.converters.EntityDtoConverter;
 import com.bank.dto.ObjectDto;
 import com.bank.entity.Customer;
@@ -15,7 +14,6 @@ import com.bank.repository.ValuesRepository;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Service
 public class CustomerService {

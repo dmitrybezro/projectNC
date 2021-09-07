@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.util.*;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 public class Customer extends BaseEntity{
@@ -36,41 +35,6 @@ public class Customer extends BaseEntity{
     @Setter
     @Attribute("5")
     private Integer numberAccount;
-
-    @Getter
-    @Setter
-    private List<Account> listAccount;
-
-    @Setter
-    @Getter
-    private Map<String, Double> totalBalance;
-
-    {
-        listAccount = new ArrayList<>();
-        totalBalance = new HashMap<>();
-        totalBalance.put("RUB", 0.0);
-        totalBalance.put("USD", 0.0);
-        totalBalance.put("EUR", 0.0);
-    }
-
-    private Map<String, Double> upTotalBalance(){
-
-        for(int i = 0; i < listAccount.size(); i++){
-            switch (listAccount.get(i).getCurrency()){
-                case "RUB":
-                    totalBalance.put("RUB", totalBalance.get("RUB") + listAccount.get(i).getBalance());
-                    break;
-                case "USD":
-                    totalBalance.put("USD", totalBalance.get("USD") + listAccount.get(i).getBalance());
-                    break;
-                case "EUR":
-                    totalBalance.put("EUR", totalBalance.get("EUR") + listAccount.get(i).getBalance());
-                    break;
-            }
-        }
-
-        return this.totalBalance;
-    }
 
     @Override
     public boolean equals(Object o) {

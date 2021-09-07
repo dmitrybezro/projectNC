@@ -14,9 +14,10 @@ import java.util.Date;
 public class Transaction extends BaseEntity{
     @Attribute("14")
     private String type;
+
     @Attribute("15")
     private Double payment;
+
     @Attribute("16")
     private Date dateTransaction;
-
 }

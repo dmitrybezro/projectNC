@@ -8,26 +8,29 @@ import lombok.Setter;
 
 import java.math.BigInteger;
 
-
 @AllArgsConstructor
 @NoArgsConstructor
 public class Task extends BaseEntity{
     @Setter
     @Attribute("9")
     private BigInteger idAccountSend;
+
     @Setter
     @Attribute("10")
     private BigInteger idAccountReceive;
+
     @Setter
     @Getter
     @Attribute("11")
     private String status;
+
     @Setter
     @Attribute("12")
     private Double transferAmount;
+
     @Setter
     @Getter
-    @Attribute("14")
+    @Attribute("13")
     private String errorMessage;
 
     public Task(BigInteger idAccountSend, BigInteger idAccountReceive, String status, Double transferAmount){

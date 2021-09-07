@@ -57,6 +57,7 @@ public class EntityService {
 
     public void saveTransaction (Transaction transaction, BigInteger parentId) throws IllegalAccessException {
         ObjectDto objectDto = EntityDtoConverter.toDto(transaction).getKey();
+        objectDto.setObjectType(4);
         objectDto.setParentId(parentId);
         objectDto.setObjectName("transaction");
         objectsRepository.save(objectDto);

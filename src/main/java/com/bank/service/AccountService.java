@@ -21,6 +21,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class AccountService {
@@ -62,57 +63,45 @@ public class AccountService {
 
    public Task transfer(TransferRequestIn input)throws AccountNotFoundException, NegativeAccountBalanceException, IllegalAccessException, InstantiationException{
 
-        BigInteger idAccountSend = input.getIdAccountSend();
-        BigInteger idAccountReceive = input.getIdAccountReceive();
-        Double transferAmount = input.getSum();
+       BigInteger idAccountSend = input.getIdAccountSend();
+       BigInteger idAccountReceive = input.getIdAccountReceive();
+       Double transferAmount = input.getSum();
 
-        //  Create task
-        Task currentTask = new Task(idAccountSend, idAccountReceive, "New", transferAmount);
-        BigInteger idTask = entityService.saveEntity(currentTask);
+       //  Create task
+       Task currentTask = new Task(idAccountSend, idAccountReceive, "New", transferAmount);
+       currentTask.setName("task");
+       BigInteger idTask = entityService.saveEntity(currentTask);
+       currentTask.setId(idTask);
 
-        //  Build account send
-        Account accountSend = entityService.getById(idAccountSend, Account.class);
-        if(accountSend.getBalance() < transferAmount){
-            throw new NegativeAccountBalanceException("There are not enough funds on the account");
-        }
+       //  Build account send
+       Account accountSend = entityService.getById(idAccountSend, Account.class);
+       if(accountSend.getBalance() < transferAmount){
+           currentTask.setStatus("Error");
+           currentTask.setErrorMessage("There are not enough funds on the account");
+           entityService.saveEntity(currentTask);
+       }
 
-        //  Build account receive
-        Account accountReceive = entityService.getById(idAccountReceive, Account.class);
+      Runnable runnable = () -> {
+           try{
+               transferThread(accountSend, currentTask, idAccountSend, idAccountReceive, transferAmount);
+           } catch (Exception exception){
+               exception.printStackTrace();
+           }
+      };
 
-        //  Build account draft
-        Account accountDraft = entityService.getByParentId(idAccountSend, Account.class);
+      Thread thread = new Thread(runnable);
+      thread.start();
 
-        Task returnedTask = new Task("New", "");
-        returnedTask.setId(idTask);
-
-        String errorMessage = transferAttempt(accountSend, accountReceive, accountDraft, transferAmount);
-
-        if(errorMessage.equals("")) {
-
-            currentTask.setStatus("Success");
-            entityService.saveEntity(currentTask);
-
-            entityService.saveTransaction(new Transaction("OUT", transferAmount, new Date()), idAccountSend);
-            entityService.saveTransaction(new Transaction("IN", transferAmount, new Date()), idAccountReceive);
-
-        } else{
-            currentTask.setStatus("Error");
-            entityService.saveEntity(currentTask);
-
-            returnedTask.setStatus("Error");
-            returnedTask.setErrorMessage(errorMessage);
-        }
-
-       return returnedTask;
-    }
+      return currentTask;
+   }
 
     @Transactional
     private String transferAttempt(Account accountSend, Account accountReceive,
-                                    Account accountDraft, Double transferAmount) throws IllegalAccessException, NegativeAccountBalanceException {
+                                    Account accountDraft, Double transferAmount) throws IllegalAccessException {
 
         //  Reduce balance on sender`s account
         accountSend.setBalance(accountSend.getBalance() - transferAmount);
-        //  Где-то здесь косяк
+
         entityService.updateEntity(accountSend);
 
         String message = "";
@@ -143,5 +132,29 @@ public class AccountService {
                 InstantiationException {
 
         return  entityService.getById(id, Task.class);
+    }
+
+    private void transferThread(Account accountSend,Task currentTask, BigInteger idAccountSend,
+                                BigInteger idAccountReceive, Double transferAmount) throws IllegalAccessException, NegativeAccountBalanceException, InstantiationException, InterruptedException {
+        //  Build account receive
+        Account accountReceive = entityService.getById(idAccountReceive, Account.class);
+
+        //  Build account draft
+        Account accountDraft = entityService.getByParentId(idAccountSend, Account.class);
+        TimeUnit.SECONDS.sleep(10);
+        currentTask.setStatus("InProcess");
+        entityService.saveEntity(currentTask);
+        String errorMessage = transferAttempt(accountSend, accountReceive, accountDraft, transferAmount);
+        //TimeUnit.SECONDS.sleep(20);
+        if(errorMessage.equals("")) {
+            currentTask.setStatus("Success");
+            entityService.saveEntity(currentTask);
+
+            entityService.saveTransaction(new Transaction("OUT", transferAmount, new Date()), idAccountSend);
+            entityService.saveTransaction(new Transaction("IN", transferAmount, new Date()), idAccountReceive);
+        } else{
+            currentTask.setStatus("Error");
+            entityService.saveEntity(currentTask);
+        }
     }
 }
