@@ -3,6 +3,7 @@ package com.bank.service;
 import com.bank.converters.EntityDtoConverter;
 import com.bank.dto.ObjectDto;
 import com.bank.dto.ValueDto;
+import com.bank.entity.Account;
 import com.bank.entity.BaseEntity;
 import com.bank.entity.Transaction;
 import com.bank.exception.NegativeAccountBalanceException;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -60,6 +62,7 @@ public class EntityService {
         objectDto.setObjectType(4);
         objectDto.setParentId(parentId);
         objectDto.setObjectName("transaction");
+        objectDto.setObjectDoc(new Date(transaction.getDateTransaction().getTime()));
         objectsRepository.save(objectDto);
         List<ValueDto> listValues = EntityDtoConverter.toDto(transaction).getValue();
         for(ValueDto value : listValues){

@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +36,17 @@ public class AccountService {
     @Autowired
     private EntityService entityService;
 
+    public List<Account> getAccountList(BigInteger id) throws IllegalAccessException, InstantiationException {
+        List<ObjectDto> objectDtoList = objectsRepository.findByObjectTypeAndParentId(2, id);
+        List<Account> accountList= new ArrayList<Account>();
+
+        for(ObjectDto objectDto : objectDtoList){
+            accountList.add(entityService.getById(objectDto.getObjectId(), Account.class));
+        }
+
+        return accountList;
+    }
+
     public Account getGeneralInfo(BigInteger id) throws AccountNotFoundException, IllegalAccessException, InstantiationException {
 
         ObjectDto objectDto = objectsRepository.findByObjectId(id);
@@ -49,15 +62,18 @@ public class AccountService {
     }
 
     public List<Transaction> getList(BigInteger id, Date start_date,
-                                           Date end_date, Integer page, Integer items) throws IllegalAccessException, InstantiationException{
+                                           Date end_date, Integer page, Integer items) throws Exception {
 
         PageRequest pageRequest = PageRequest.of(page, items);
-        Page<ObjectDto> pageDto = objectsRepository.findByParentIdAndObjectTypeAndObjectDocBetween(id, 4, start_date, end_date, pageRequest);
 
+        Page<ObjectDto> pageDto = objectsRepository.findByParentIdAndObjectTypeAndObjectDocBetween(id, 4,
+                new java.sql.Date(start_date.getTime()), new java.sql.Date(end_date.getTime()), pageRequest);
         List<Transaction> transactionsList = new ArrayList<>();
+
         for(ObjectDto object: pageDto){
             transactionsList.add(entityService.getById(object.getObjectId(),Transaction.class));
         }
+
         return transactionsList;
     }
 
@@ -150,8 +166,8 @@ public class AccountService {
             currentTask.setStatus("Success");
             entityService.saveEntity(currentTask);
 
-            entityService.saveTransaction(new Transaction("OUT", transferAmount, new Date()), idAccountSend);
-            entityService.saveTransaction(new Transaction("IN", transferAmount, new Date()), idAccountReceive);
+            entityService.saveTransaction(new Transaction("OUT", transferAmount, new java.sql.Date(System.currentTimeMillis())), idAccountSend);
+            entityService.saveTransaction(new Transaction("IN", transferAmount, new java.sql.Date(System.currentTimeMillis())), idAccountReceive);
         } else{
             currentTask.setStatus("Error");
             entityService.saveEntity(currentTask);

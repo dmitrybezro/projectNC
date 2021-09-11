@@ -3,6 +3,7 @@ package com.bank.converters;
 import com.bank.annotations.Attribute;
 import com.bank.dto.ObjectDto;
 import com.bank.dto.ValueDto;
+import com.bank.editor.MyDateEditor;
 import com.bank.entity.BaseEntity;
 import griffon.core.editors.DoublePropertyEditor;
 import lombok.Getter;
@@ -20,6 +21,7 @@ public class EntityDtoConverter {
     static{
         PropertyEditorManager.registerEditor(BigInteger.class, BigIntegerPropertyEditor.class);
         PropertyEditorManager.registerEditor(Double.class, DoublePropertyEditor.class);
+        PropertyEditorManager.registerEditor(Date.class, MyDateEditor.class);
     }
 
     public static <T extends BaseEntity> Pair<ObjectDto, List<ValueDto>> toDto(T entity) throws IllegalAccessException {
@@ -59,11 +61,12 @@ public class EntityDtoConverter {
             if(field == null){
                 continue;
             }
-            //  Какой-то косячок
+
             PropertyEditor editor = PropertyEditorManager.findEditor(field.getType());
             if(editor ==null){
                 throw new RuntimeException("" + param.getAttributeId() + " " + param.getParameterValue());
             }
+
             editor.setAsText(param.getParameterValue());
             field.setAccessible(true);
             field.set(entity, editor.getValue());
