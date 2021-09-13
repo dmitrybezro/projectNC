@@ -18,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.math.BigInteger;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -161,7 +159,7 @@ public class AccountService {
         currentTask.setStatus("InProcess");
         entityService.saveEntity(currentTask);
         String errorMessage = transferAttempt(accountSend, accountReceive, accountDraft, transferAmount);
-        //TimeUnit.SECONDS.sleep(20);
+//        TimeUnit.SECONDS.sleep(20);
         if(errorMessage.equals("")) {
             currentTask.setStatus("Success");
             entityService.saveEntity(currentTask);

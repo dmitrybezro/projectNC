@@ -1,7 +1,5 @@
 package com.bank.controller;
 
-/*import com.bankNC.converters.CustomerTo;*/
-
 import com.bank.entity.Customer;
 import com.bank.exception.CustomerNotFoundException;
 import com.bank.service.CustomerService;
@@ -18,7 +16,7 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    @GetMapping("/users")
+    @GetMapping("/user")
     public ResponseEntity<Customer> getOneCustomer(@RequestParam BigInteger objectId) throws CustomerNotFoundException, IllegalAccessException, InstantiationException {
             return ResponseEntity.ok(customerService.getOne(objectId));
     }
