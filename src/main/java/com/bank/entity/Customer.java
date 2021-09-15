@@ -36,6 +36,16 @@ public class Customer extends BaseEntity{
     @Attribute("5")
     private Integer numberAccount;
 
+    @Setter
+    @Getter
+    @Attribute("100")
+    private String login;
+
+    @Setter
+    @Getter
+    @Attribute("101")
+    private String passwordHash;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

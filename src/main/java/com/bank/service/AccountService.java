@@ -155,11 +155,9 @@ public class AccountService {
 
         //  Build account draft
         Account accountDraft = entityService.getByParentId(idAccountSend, Account.class);
-        TimeUnit.SECONDS.sleep(10);
         currentTask.setStatus("InProcess");
         entityService.saveEntity(currentTask);
         String errorMessage = transferAttempt(accountSend, accountReceive, accountDraft, transferAmount);
-//        TimeUnit.SECONDS.sleep(20);
         if(errorMessage.equals("")) {
             currentTask.setStatus("Success");
             entityService.saveEntity(currentTask);

@@ -40,7 +40,7 @@ public class AccountController {
                                                     @RequestParam(defaultValue = "10") Integer items) throws Exception {
 
         List<Transaction> list = accountService.getList(id,start_date, end_date, page, items);
-        return new ResponseEntity<List<Transaction>>(list, HttpStatus.OK);
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @PostMapping("/transfer")

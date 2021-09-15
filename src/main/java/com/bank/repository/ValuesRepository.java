@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface ValuesRepository  extends CrudRepository<ValueDto, Integer> {
     List<ValueDto> findAllByObjectId(BigInteger objectId);
+    ValueDto getByParameterValue(String value);
 }
