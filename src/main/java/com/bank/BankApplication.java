@@ -14,16 +14,4 @@ public class BankApplication {
     public static void main(String[] args) {
         SpringApplication.run(BankApplication.class, args);
     }
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurerAdapter() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/**").allowedOrigins("http://localhost:8080").allowedMethods("PUT", "DELETE",
-//                        "GET", "POST", "HEAD", "OPTIONS").allowedHeaders("Origin", "Content_Type", "Access-Control-Allow-Headers", "Authorization", "X-Requested-With");
-//            }
-//        };
-//    }
-
-
 }
