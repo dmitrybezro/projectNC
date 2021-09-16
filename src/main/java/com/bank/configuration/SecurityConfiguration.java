@@ -23,6 +23,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry urlRegistry = http.httpBasic().and()
                 .authorizeRequests()
                 .antMatchers("/api/**").hasAuthority("USER");
+        http.cors();
 
         urlRegistry.anyRequest().permitAll()
                 .and()
