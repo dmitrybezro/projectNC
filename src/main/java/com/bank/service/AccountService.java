@@ -71,7 +71,7 @@ public class AccountService {
         for(ObjectDto object: pageDto){
             transactionsList.add(entityService.getById(object.getObjectId(),Transaction.class));
         }
-
+        //throw new Exception("" + transactionsList.get(0).getDateTransaction());
         return transactionsList;
     }
 
@@ -93,6 +93,7 @@ public class AccountService {
            currentTask.setStatus("Error");
            currentTask.setErrorMessage("There are not enough funds on the account");
            entityService.saveEntity(currentTask);
+           return currentTask;
        }
 
       Runnable runnable = () -> {
@@ -152,6 +153,8 @@ public class AccountService {
                                 BigInteger idAccountReceive, Double transferAmount) throws IllegalAccessException, NegativeAccountBalanceException, InstantiationException, InterruptedException {
         //  Build account receive
         Account accountReceive = entityService.getById(idAccountReceive, Account.class);
+
+        //  Добавить проверку, что одинаковая валюта
 
         //  Build account draft
         Account accountDraft = entityService.getByParentId(idAccountSend, Account.class);

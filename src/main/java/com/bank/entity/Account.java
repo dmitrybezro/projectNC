@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @AllArgsConstructor
 @NoArgsConstructor
 public class Account extends BaseEntity{
@@ -19,7 +21,7 @@ public class Account extends BaseEntity{
 
     @Getter@Setter
     @Attribute("8")
-    private String dataOpen;
+    private Date dataOpen;
 
     public Account(Account account){
 
