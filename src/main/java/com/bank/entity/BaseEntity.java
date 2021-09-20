@@ -1,27 +1,20 @@
 package com.bank.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigInteger;
+import java.sql.Date;
 import java.util.Objects;
 
+@Getter
+@Setter
 public class BaseEntity {
-    private BigInteger id;
-    private String name;
-
-    public BigInteger getId() {
-        return id;
-    }
-
-    public void setId(BigInteger id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    protected BigInteger id;
+    protected BigInteger parentId;
+    protected Integer objectType;
+    protected String name;
+    protected Date creationDate;
 
     @Override
     public boolean equals(Object o) {

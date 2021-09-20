@@ -28,6 +28,9 @@ public class EntityDtoConverter {
         ObjectDto objectDto = new ObjectDto(
                 entity.getId(),
                 entity.getName());
+        objectDto.setObjectType(entity.getObjectType());
+        objectDto.setParentId(entity.getParentId());
+        objectDto.setObjectDoc(entity.getCreationDate());
 
         List<ValueDto> paramList = new ArrayList<>();
         List<Field> fieldList = getClassFields(entity.getClass());

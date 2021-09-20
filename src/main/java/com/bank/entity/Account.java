@@ -21,7 +21,7 @@ public class Account extends BaseEntity{
 
     @Getter@Setter
     @Attribute("8")
-    private Date dataOpen;
+    private String dataOpen;
 
     public Account(Account account){
 
