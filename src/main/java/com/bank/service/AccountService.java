@@ -7,6 +7,7 @@ import com.bank.entity.Account;
 import com.bank.entity.Task;
 import com.bank.entity.Transaction;
 import com.bank.exception.AccountNotFoundException;
+import com.bank.exception.DifferentСurrencyException;
 import com.bank.exception.NegativeAccountBalanceException;
 import com.bank.model.TransferRequestIn;
 import com.bank.repository.ObjectsRepository;
@@ -150,11 +151,16 @@ public class AccountService {
     }
 
     private void transferThread(Account accountSend,Task currentTask, BigInteger idAccountSend,
-                                BigInteger idAccountReceive, Double transferAmount) throws IllegalAccessException, NegativeAccountBalanceException, InstantiationException, InterruptedException {
+                                BigInteger idAccountReceive, Double transferAmount) throws IllegalAccessException, NegativeAccountBalanceException, InstantiationException, InterruptedException, DifferentСurrencyException {
         //  Build account receive
         Account accountReceive = entityService.getById(idAccountReceive, Account.class);
 
-        //  Добавить проверку, что одинаковая валюта
+        if(!accountSend.getCurrency().equals(accountReceive.getCurrency())){
+            currentTask.setErrorMessage("The account currencies are different");
+            currentTask.setStatus("Error");
+            entityService.saveEntity(currentTask);
+            //throw new DifferentСurrencyException("The account currencies are different");
+        }
 
         //  Build account draft
         Account accountDraft = entityService.getByParentId(idAccountSend, Account.class);
