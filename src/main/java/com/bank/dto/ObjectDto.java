@@ -24,9 +24,6 @@ public class ObjectDto {
     @Column(name = "par_id")
     private BigInteger parentId;
 
-    @Column(name = "obj_type")
-    private Integer objectType;
-
     @Column(name = "obj_name")
     private String objectName;
 
@@ -40,7 +37,6 @@ public class ObjectDto {
 
     public ObjectDto(ObjectDto objectDto){
         this.parentId = objectDto.parentId;
-        this.objectType = objectDto.objectType;
         this.objectName = objectDto.objectName;
         this.objectDoc = objectDto.objectDoc;
     }

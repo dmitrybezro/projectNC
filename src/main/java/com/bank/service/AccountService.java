@@ -22,7 +22,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class AccountService {
@@ -36,7 +35,7 @@ public class AccountService {
     private EntityService entityService;
 
     public List<Account> getAccountList(BigInteger id) throws IllegalAccessException, InstantiationException {
-        List<ObjectDto> objectDtoList = objectsRepository.findByObjectTypeAndParentId(2, id);
+        List<ObjectDto> objectDtoList = objectsRepository.findByObjectNameAndParentId("account", id);
         List<Account> accountList= new ArrayList<Account>();
 
         for(ObjectDto objectDto : objectDtoList){
@@ -52,11 +51,11 @@ public class AccountService {
         List<ValueDto> listAttr = valueRepository.findAllByObjectId(id);
 
         if(listAttr.size() == 0){
-            throw new AccountNotFoundException("Счет не найден");
+            throw new AccountNotFoundException("Account not found");
         }
 
         Account account = EntityDtoConverter.toEntity(objectDto, listAttr, Account.class);
-        account.setName("Account");
+
         return account;
     }
 
@@ -65,14 +64,14 @@ public class AccountService {
 
         PageRequest pageRequest = PageRequest.of(page, items);
 
-        Page<ObjectDto> pageDto = objectsRepository.findByParentIdAndObjectTypeAndObjectDocBetween(id, 4,
+        Page<ObjectDto> pageDto = objectsRepository.findByParentIdAndObjectNameAndObjectDocBetween(id, "transaction",
                 new java.sql.Date(start_date.getTime()), new java.sql.Date(end_date.getTime()), pageRequest);
         List<Transaction> transactionsList = new ArrayList<>();
 
         for(ObjectDto object: pageDto){
             transactionsList.add(entityService.getById(object.getObjectId(),Transaction.class));
         }
-        //throw new Exception("" + transactionsList.get(0).getDateTransaction());
+
         return transactionsList;
     }
 
@@ -85,6 +84,8 @@ public class AccountService {
        //  Create task
        Task currentTask = new Task(idAccountSend, idAccountReceive, "New", transferAmount);
        currentTask.setName("task");
+       currentTask.setCreationDate(new java.sql.Date(System.currentTimeMillis()));
+       currentTask.setParentId(idAccountSend);
        BigInteger idTask = entityService.saveEntity(currentTask);
        currentTask.setId(idTask);
 
@@ -159,7 +160,6 @@ public class AccountService {
             currentTask.setErrorMessage("The account currencies are different");
             currentTask.setStatus("Error");
             entityService.saveEntity(currentTask);
-            //throw new DifferentСurrencyException("The account currencies are different");
         }
 
         //  Build account draft

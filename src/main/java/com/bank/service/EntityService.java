@@ -11,6 +11,7 @@ import com.bank.repository.ObjectsRepository;
 import com.bank.repository.ValuesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.sql.Date;
@@ -34,6 +35,7 @@ public class EntityService {
         return entity;
     }
 
+    @Transactional
     public <T extends BaseEntity> BigInteger saveEntity(T entity) throws IllegalAccessException, NegativeAccountBalanceException {
         ObjectDto objectDto1 = EntityDtoConverter.toDto(entity).getKey();
         objectsRepository.save(objectDto1);
@@ -51,7 +53,7 @@ public class EntityService {
     }
 
     public <T extends BaseEntity> T getByParentId(BigInteger parentId, Class<T> clazz) throws IllegalAccessException, InstantiationException, NegativeAccountBalanceException {
-        ObjectDto objectDto2 = objectsRepository.findByParentIdAndObjectType(parentId, 1);
+        ObjectDto objectDto2 = objectsRepository.findByParentIdAndObjectName(parentId, "account");
         List<ValueDto> listValue = valueRepository.findAllByObjectId(objectDto2.getObjectId());
         T entity = EntityDtoConverter.toEntity(objectDto2, listValue, clazz);
         return entity;
@@ -59,7 +61,6 @@ public class EntityService {
 
     public void saveTransaction (Transaction transaction, BigInteger parentId) throws IllegalAccessException {
         ObjectDto objectDto = EntityDtoConverter.toDto(transaction).getKey();
-        objectDto.setObjectType(4);
         objectDto.setParentId(parentId);
         objectDto.setObjectName("transaction");
         objectDto.setObjectDoc(new Date(transaction.getDateTransaction().getTime()));
