@@ -1,14 +1,9 @@
 package com.bank.service;
 
-import com.bank.converters.EntityDtoConverter;
 import com.bank.dto.ObjectDto;
-import com.bank.dto.ValueDto;
 import com.bank.entity.Account;
 import com.bank.entity.Task;
 import com.bank.entity.Transaction;
-import com.bank.exception.AccountNotFoundException;
-import com.bank.exception.DifferentСurrencyException;
-import com.bank.exception.NegativeAccountBalanceException;
 import com.bank.model.TransferRequestIn;
 import com.bank.repository.ObjectsRepository;
 import com.bank.repository.ValuesRepository;
@@ -45,18 +40,8 @@ public class AccountService {
         return accountList;
     }
 
-    public Account getGeneralInfo(BigInteger id) throws AccountNotFoundException, IllegalAccessException, InstantiationException {
-
-        ObjectDto objectDto = objectsRepository.findByObjectId(id);
-        List<ValueDto> listAttr = valueRepository.findAllByObjectId(id);
-
-        if(listAttr.size() == 0){
-            throw new AccountNotFoundException("Account not found");
-        }
-
-        Account account = EntityDtoConverter.toEntity(objectDto, listAttr, Account.class);
-
-        return account;
+    public Account getGeneralInfo(BigInteger id) throws IllegalAccessException, InstantiationException {
+        return entityService.getById(id, Account.class);
     }
 
     public List<Transaction> getList(BigInteger id, Date start_date,
@@ -75,7 +60,7 @@ public class AccountService {
         return transactionsList;
     }
 
-   public Task transfer(TransferRequestIn input)throws AccountNotFoundException, NegativeAccountBalanceException, IllegalAccessException, InstantiationException{
+   public Task transfer(TransferRequestIn input)throws IllegalAccessException, InstantiationException{
 
        BigInteger idAccountSend = input.getIdAccountSend();
        BigInteger idAccountReceive = input.getIdAccountReceive();
@@ -161,7 +146,7 @@ public class AccountService {
     }
 
     private void transferThread(Account accountSend,Account accountReceive, Task currentTask, BigInteger idAccountSend,
-                                BigInteger idAccountReceive, Double transferAmount) throws IllegalAccessException, NegativeAccountBalanceException, InstantiationException, InterruptedException, DifferentСurrencyException {
+                                BigInteger idAccountReceive, Double transferAmount) throws IllegalAccessException, InstantiationException {
 
         //  Build account draft
         Account accountDraft = entityService.getByParentId(idAccountSend, Account.class);

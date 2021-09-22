@@ -6,7 +6,6 @@ import com.bank.dto.ValueDto;
 import com.bank.entity.Account;
 import com.bank.entity.BaseEntity;
 import com.bank.entity.Transaction;
-import com.bank.exception.NegativeAccountBalanceException;
 import com.bank.repository.ObjectsRepository;
 import com.bank.repository.ValuesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public class EntityService {
     }
 
     @Transactional
-    public <T extends BaseEntity> BigInteger saveEntity(T entity) throws IllegalAccessException, NegativeAccountBalanceException {
+    public <T extends BaseEntity> BigInteger saveEntity(T entity) throws IllegalAccessException {
         ObjectDto objectDto1 = EntityDtoConverter.toDto(entity).getKey();
         objectsRepository.save(objectDto1);
         List<ValueDto> listValues = EntityDtoConverter.toDto(entity).getValue();
@@ -52,7 +51,7 @@ public class EntityService {
         valueRepository.saveAll(listValues);
     }
 
-    public <T extends BaseEntity> T getByParentId(BigInteger parentId, Class<T> clazz) throws IllegalAccessException, InstantiationException, NegativeAccountBalanceException {
+    public <T extends BaseEntity> T getByParentId(BigInteger parentId, Class<T> clazz) throws IllegalAccessException, InstantiationException {
         ObjectDto objectDto2 = objectsRepository.findByParentIdAndObjectName(parentId, "account");
         List<ValueDto> listValue = valueRepository.findAllByObjectId(objectDto2.getObjectId());
         T entity = EntityDtoConverter.toEntity(objectDto2, listValue, clazz);

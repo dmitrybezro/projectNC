@@ -2,7 +2,6 @@ package com.bank.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import java.math.BigInteger;
 import java.sql.Date;
 import java.util.Objects;

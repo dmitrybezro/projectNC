@@ -4,7 +4,6 @@ import com.bank.dto.ObjectDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
-
 import java.math.BigInteger;
 import java.sql.Date;
 import java.util.List;
