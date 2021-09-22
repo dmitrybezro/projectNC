@@ -98,9 +98,18 @@ public class AccountService {
            return currentTask;
        }
 
+       //  Build account receive
+       Account accountReceive = entityService.getById(idAccountReceive, Account.class);
+       if(!accountSend.getCurrency().equals(accountReceive.getCurrency())){
+           currentTask.setErrorMessage("The account currencies are different");
+           currentTask.setStatus("Error");
+           entityService.saveEntity(currentTask);
+           return currentTask;
+       }
+
       Runnable runnable = () -> {
            try{
-               transferThread(accountSend, currentTask, idAccountSend, idAccountReceive, transferAmount);
+               transferThread(accountSend, accountReceive, currentTask, idAccountSend, idAccountReceive, transferAmount);
            } catch (Exception exception){
                exception.printStackTrace();
            }
@@ -151,16 +160,8 @@ public class AccountService {
         return  entityService.getById(id, Task.class);
     }
 
-    private void transferThread(Account accountSend,Task currentTask, BigInteger idAccountSend,
+    private void transferThread(Account accountSend,Account accountReceive, Task currentTask, BigInteger idAccountSend,
                                 BigInteger idAccountReceive, Double transferAmount) throws IllegalAccessException, NegativeAccountBalanceException, InstantiationException, InterruptedException, DifferentСurrencyException {
-        //  Build account receive
-        Account accountReceive = entityService.getById(idAccountReceive, Account.class);
-
-        if(!accountSend.getCurrency().equals(accountReceive.getCurrency())){
-            currentTask.setErrorMessage("The account currencies are different");
-            currentTask.setStatus("Error");
-            entityService.saveEntity(currentTask);
-        }
 
         //  Build account draft
         Account accountDraft = entityService.getByParentId(idAccountSend, Account.class);

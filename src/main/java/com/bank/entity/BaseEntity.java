@@ -12,7 +12,6 @@ import java.util.Objects;
 public class BaseEntity {
     protected BigInteger id;
     protected BigInteger parentId;
-    protected Integer objectType;
     protected String name;
     protected Date creationDate;
 
