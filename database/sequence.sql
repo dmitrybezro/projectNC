@@ -1,0 +1,9 @@
+CREATE SEQUENCE public.seq_obj
+    INCREMENT 1
+    START 1010
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.seq_obj
+    OWNER TO postgres;
