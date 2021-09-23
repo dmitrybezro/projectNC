@@ -14,10 +14,14 @@ import static com.bank.constants.Attributes.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Task extends BaseEntity{
+    @JsonIgnore
+    @Getter
     @Setter
     @Attribute(ID_ACCOUNT_SEND)
     private BigInteger idAccountSend;
 
+    @JsonIgnore
+    @Getter
     @Setter
     @Attribute(ID_ACCOUNT_RECV)
     private BigInteger idAccountReceive;
@@ -27,7 +31,9 @@ public class Task extends BaseEntity{
     @Attribute(STATUS)
     private String status;
 
+    @JsonIgnore
     @Setter
+    @Getter
     @Attribute(TRANSFER_AMOUNT)
     private Double transferAmount;
 
@@ -43,14 +49,8 @@ public class Task extends BaseEntity{
         this.transferAmount = transferAmount;
         this.setCreationDate(new java.sql.Date(System.currentTimeMillis()));
         this.setParentId(idAccountSend);
-        this.setName("task "+idAccountSend+" " +new Date());
+        this.setObjectType("task");
+        this.name = String.format("task_%s_%s", idAccountSend, new Date().getTime());
     }
 
-//    public Task(String status, String errorMessage){
-//        this.status = status;
-//        this.errorMessage = errorMessage;
-//        this.setCreationDate(new java.sql.Date(System.currentTimeMillis()));
-//        this.setParentId(idAccountSend);
-//        this.setName("task "+idAccountSend+" " +new Date());
-//    }
 }

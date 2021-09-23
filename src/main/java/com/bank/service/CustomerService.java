@@ -16,7 +16,7 @@ public class CustomerService {
     @Autowired
     private ValuesRepository valueRepository;
 
-    public Customer getOne(BigInteger objectId) throws IllegalAccessException, InstantiationException {
+    public Customer getOneCustomer(BigInteger objectId) throws IllegalAccessException, InstantiationException {
         return entityService.getById(objectId, Customer.class);
     }
 
@@ -26,6 +26,6 @@ public class CustomerService {
             return null;
         }
 
-        return getOne(value.getObjectId());
+        return getOneCustomer(value.getObjectId());
     }
 }

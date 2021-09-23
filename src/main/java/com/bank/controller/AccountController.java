@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigInteger;
 import java.util.Date;
@@ -25,21 +27,23 @@ public class AccountController {
     AccountService accountService;
 
     @GetMapping("/accounts")
-    public ResponseEntity<List<Account>> getAllAccount()throws IllegalAccessException, InstantiationException {
-        CustomUserDetails ud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<List<Account>> getAllAccount(Authentication authentication)
+            throws IllegalAccessException, InstantiationException {
+        CustomUserDetails ud = (CustomUserDetails) authentication.getPrincipal();
         return ResponseEntity.ok(accountService.getAccountList(ud.getUserId()));
     }
 
     @GetMapping("/account/{id}")
-    public ResponseEntity<Account> getOneAccount(@PathVariable BigInteger id) throws IllegalAccessException, InstantiationException {
-        CustomUserDetails ud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<Account> getOneAccount(@PathVariable BigInteger id,
+                                                 Authentication authentication)
+            throws IllegalAccessException, InstantiationException {
+        CustomUserDetails ud = (CustomUserDetails) authentication.getPrincipal();
         Account account = accountService.getAccountInfoByUser(id, ud.getUserId());
-        if(account != null){
-            return ResponseEntity.ok(account);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if(account == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found");
         }
-
+        ResponseEntity.internalServerError();
+        return ResponseEntity.ok(account);
     }
 
     @GetMapping("/account/{id}/operations")
@@ -50,35 +54,38 @@ public class AccountController {
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer items) throws Exception {
 
-        CustomUserDetails ud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        CustomUserDetails ud = (CustomUserDetails) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
         List<Transaction> list = accountService.getListByUser(id, ud.getUserId(), start_date, end_date, page, items);
-        if(list != null){
-            return ResponseEntity.ok(list);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if(list == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found");
         }
-
+        ResponseEntity.internalServerError();
+        return ResponseEntity.ok(list);
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<Task> transfer(@RequestBody TransferRequestIn task) throws IllegalAccessException, InstantiationException {
-        CustomUserDetails ud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<Task> transfer(@RequestBody TransferRequestIn task) throws Exception {
+        CustomUserDetails ud = (CustomUserDetails) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
         Task taskReturned = accountService.transfer(task, ud.getUserId());
-        if(taskReturned != null){
-            return ResponseEntity.ok(taskReturned);
-        }else{
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if(taskReturned == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found");
         }
+        ResponseEntity.internalServerError();
+        return ResponseEntity.ok(taskReturned);
 
     }
     @GetMapping("/transfer/{id}")
-    public ResponseEntity<Task> getTransactionStatus(@PathVariable BigInteger id) throws IllegalAccessException, InstantiationException {
-        CustomUserDetails ud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public ResponseEntity<Task> getTransactionStatus(@PathVariable BigInteger id)
+            throws IllegalAccessException, InstantiationException {
+        CustomUserDetails ud = (CustomUserDetails) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
         Task task = accountService.getTransactionInfo(id, ud.getUserId());
-        if(task != null){
-            return ResponseEntity.ok(task);
-        }else{
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if(task == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account not found");
         }
+        ResponseEntity.internalServerError();
+        return ResponseEntity.ok(task);
     }
 }

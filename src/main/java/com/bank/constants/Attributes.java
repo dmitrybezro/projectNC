@@ -17,6 +17,7 @@ public class Attributes {
     public final static String TYPE = "14";
     public final static String PAYMENT = "15";
     public final static String TRANSACTION_DATE = "16";
+    public final static String ID_ACCOUNT_SEND_OR_RECV = "17";
 
 
     public final static String LOGIN = "100";

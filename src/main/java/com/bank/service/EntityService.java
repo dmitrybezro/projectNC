@@ -3,7 +3,6 @@ package com.bank.service;
 import com.bank.converters.EntityDtoConverter;
 import com.bank.dto.ObjectDto;
 import com.bank.dto.ValueDto;
-import com.bank.entity.Account;
 import com.bank.entity.BaseEntity;
 import com.bank.entity.Transaction;
 import com.bank.repository.ObjectsRepository;

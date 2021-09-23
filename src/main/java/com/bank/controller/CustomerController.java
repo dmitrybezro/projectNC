@@ -18,6 +18,6 @@ public class CustomerController {
     @GetMapping("/user")
     public ResponseEntity<Customer> getCustomer() throws IllegalAccessException, InstantiationException {
         CustomUserDetails ud = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(customerService.getOne(ud.getUserId()));
+        return ResponseEntity.ok(customerService.getOneCustomer(ud.getUserId()));
     }
 }
