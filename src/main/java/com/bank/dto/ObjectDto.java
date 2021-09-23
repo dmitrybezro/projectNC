@@ -19,6 +19,9 @@ public class ObjectDto {
     @Column(name = "obj_id")
     private BigInteger objectId;
 
+    @Column(name = "obj_type")
+    private String objectType;
+
     @Column(name = "par_id")
     private BigInteger parentId;
 

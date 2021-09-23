@@ -10,9 +10,10 @@ import java.util.List;
 
 public interface ObjectsRepository extends PagingAndSortingRepository<ObjectDto, BigInteger> {
     ObjectDto findByObjectId(BigInteger objectId);
-    ObjectDto findByParentIdAndObjectName(BigInteger parentId, String objectName);
-    Page<ObjectDto> findByParentIdAndObjectNameAndObjectDocBetween(
-            BigInteger parentId, String objectName, Date ObjectDocStart,
+    ObjectDto findByParentIdAndObjectType(BigInteger parentId, String objectType);
+    Page<ObjectDto> findByParentIdAndObjectTypeAndObjectDocBetween(
+            BigInteger parentId, String objectType, Date ObjectDocStart,
             Date ObjectDocEnd, Pageable pageRequest);
-    List<ObjectDto> findByObjectNameAndParentId(String objectName, BigInteger ParentId);
+    List<ObjectDto> findByObjectTypeAndParentId(String objectType, BigInteger ParentId);
+    ObjectDto findByObjectIdAndParentId(BigInteger objectId, BigInteger parentId);
 }

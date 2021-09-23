@@ -1,48 +1,53 @@
 package com.bank.entity;
 
 import com.bank.annotations.Attribute;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.*;
 
+import static com.bank.constants.Attributes.*;
+
 @AllArgsConstructor
 @NoArgsConstructor
 public class Customer extends BaseEntity{
     @Getter
     @Setter
-    @Attribute("1")
+    @Attribute(FIRST_NAME)
     private String firstName;
 
     @Getter
     @Setter
-    @Attribute("2")
+    @Attribute(LAST_NAME)
     private String lastName;
 
     @Getter
     @Setter
-    @Attribute("3")
+    @Attribute(PATRONYMIC)
     private String patronymic;
 
     @Getter
     @Setter
-    @Attribute("4")
+    @Attribute(BIRTH_DATE)
     private String datOfBirth;
 
     @Getter
     @Setter
-    @Attribute("5")
+    @Attribute(ACCOUNT_NUMBER)
     private Integer numberAccount;
 
+    @JsonIgnore
     @Setter
     @Getter
-    @Attribute("100")
+    @Attribute(LOGIN)
     private String login;
 
+    @JsonIgnore
     @Setter
     @Getter
-    @Attribute("101")
+    @Attribute(PASSWORD)
     private String passwordHash;
 
     @Override

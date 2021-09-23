@@ -17,6 +17,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class AccountService {
@@ -30,7 +32,7 @@ public class AccountService {
     private EntityService entityService;
 
     public List<Account> getAccountList(BigInteger id) throws IllegalAccessException, InstantiationException {
-        List<ObjectDto> objectDtoList = objectsRepository.findByObjectNameAndParentId("account", id);
+        List<ObjectDto> objectDtoList = objectsRepository.findByObjectTypeAndParentId("account", id);
         List<Account> accountList= new ArrayList<Account>();
 
         for(ObjectDto objectDto : objectDtoList){
@@ -40,16 +42,20 @@ public class AccountService {
         return accountList;
     }
 
-    public Account getGeneralInfo(BigInteger id) throws IllegalAccessException, InstantiationException {
-        return entityService.getById(id, Account.class);
+    public Account getAccountInfoByUser(BigInteger accountId, BigInteger userId) throws IllegalAccessException, InstantiationException {
+        return entityService.getByIdAndParentId(accountId, userId, Account.class);
     }
 
-    public List<Transaction> getList(BigInteger id, Date start_date,
-                                           Date end_date, Integer page, Integer items) throws Exception {
+    public List<Transaction> getListByUser(BigInteger accountId, BigInteger userId, Date start_date,
+                                     Date end_date, Integer page, Integer items) throws Exception {
+
+        if(entityService.getByIdAndParentId(accountId, userId, Account.class) == null){
+            return null;
+        }
 
         PageRequest pageRequest = PageRequest.of(page, items);
 
-        Page<ObjectDto> pageDto = objectsRepository.findByParentIdAndObjectNameAndObjectDocBetween(id, "transaction",
+        Page<ObjectDto> pageDto = objectsRepository.findByParentIdAndObjectTypeAndObjectDocBetween(accountId, "transaction",
                 new java.sql.Date(start_date.getTime()), new java.sql.Date(end_date.getTime()), pageRequest);
         List<Transaction> transactionsList = new ArrayList<>();
 
@@ -60,7 +66,11 @@ public class AccountService {
         return transactionsList;
     }
 
-   public Task transfer(TransferRequestIn input)throws IllegalAccessException, InstantiationException{
+   public Task transfer(TransferRequestIn input, BigInteger userId)throws IllegalAccessException, InstantiationException{
+
+       if(entityService.getByIdAndParentId(input.getIdAccountSend(), userId, Account.class) == null){
+           return null;
+       }
 
        BigInteger idAccountSend = input.getIdAccountSend();
        BigInteger idAccountReceive = input.getIdAccountReceive();
@@ -68,11 +78,11 @@ public class AccountService {
 
        //  Create task
        Task currentTask = new Task(idAccountSend, idAccountReceive, "New", transferAmount);
-       currentTask.setName("task");
-       currentTask.setCreationDate(new java.sql.Date(System.currentTimeMillis()));
-       currentTask.setParentId(idAccountSend);
+
        BigInteger idTask = entityService.saveEntity(currentTask);
        currentTask.setId(idTask);
+
+       //  вернуть таск
 
        //  Build account send
        Account accountSend = entityService.getById(idAccountSend, Account.class);
@@ -99,7 +109,8 @@ public class AccountService {
                exception.printStackTrace();
            }
       };
-
+//      ExecutorService executorService = Executors.newSingleThreadExecutor();
+//      executorService.submit(runnable).get();
       Thread thread = new Thread(runnable);
       thread.start();
 
@@ -138,12 +149,6 @@ public class AccountService {
         }
         return message;
     }
-    public Task getTransactionInfo(BigInteger id)
-            throws IllegalAccessException,
-                InstantiationException {
-
-        return  entityService.getById(id, Task.class);
-    }
 
     private void transferThread(Account accountSend,Account accountReceive, Task currentTask, BigInteger idAccountSend,
                                 BigInteger idAccountReceive, Double transferAmount) throws IllegalAccessException, InstantiationException {
@@ -151,17 +156,28 @@ public class AccountService {
         //  Build account draft
         Account accountDraft = entityService.getByParentId(idAccountSend, Account.class);
         currentTask.setStatus("InProcess");
-        entityService.saveEntity(currentTask);
+        entityService.updateEntity(currentTask);
         String errorMessage = transferAttempt(accountSend, accountReceive, accountDraft, transferAmount);
         if(errorMessage.equals("")) {
             currentTask.setStatus("Success");
-            entityService.saveEntity(currentTask);
+            entityService.updateEntity(currentTask);
 
             entityService.saveTransaction(new Transaction("OUT", transferAmount, new java.sql.Date(System.currentTimeMillis())), idAccountSend);
             entityService.saveTransaction(new Transaction("IN", transferAmount, new java.sql.Date(System.currentTimeMillis())), idAccountReceive);
         } else{
             currentTask.setStatus("Error");
             entityService.saveEntity(currentTask);
+        }
+    }
+
+    public Task getTransactionInfo(BigInteger taskId, BigInteger userId) throws IllegalAccessException, InstantiationException {
+        Task task = entityService.getById(taskId, Task.class);
+        Account account = entityService.getById(task.getParentId(), Account.class);
+
+        if(!account.getParentId().equals(userId)){
+            return null;
+        } else{
+            return task;
         }
     }
 }

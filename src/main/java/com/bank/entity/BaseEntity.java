@@ -1,5 +1,6 @@
 package com.bank.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import java.math.BigInteger;
@@ -10,6 +11,8 @@ import java.util.Objects;
 @Setter
 public class BaseEntity {
     protected BigInteger id;
+    protected String objectType;
+    @JsonIgnore
     protected BigInteger parentId;
     protected String name;
     protected Date creationDate;

@@ -1,24 +1,28 @@
 package com.bank.entity;
 
 import com.bank.annotations.Attribute;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import static com.bank.constants.Attributes.*;
+
 @AllArgsConstructor
 @NoArgsConstructor
 public class Account extends BaseEntity{
     @Setter@Getter
-    @Attribute("6")
+    @Attribute(BALANCE)
     private Double balance;
 
     @Getter@Setter
-    @Attribute("7")
+    @Attribute(CURRENCY)
     private String currency;
 
+    @JsonIgnore
     @Getter@Setter
-    @Attribute("8")
+    @Attribute(OPEN_DATE)
     private String dataOpen;
 
     public Account(Account account){

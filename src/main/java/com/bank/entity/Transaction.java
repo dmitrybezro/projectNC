@@ -7,17 +7,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Date;
 
+import static com.bank.constants.Attributes.*;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
 public class Transaction extends BaseEntity{
-    @Attribute("14")
+    @Attribute(TYPE)
     private String type;
 
-    @Attribute("15")
+    @Attribute(PAYMENT)
     private Double payment;
 
-    @Attribute("16")
+    @Attribute(TRANSACTION_DATE)
     private Date dateTransaction;
+
+    //  от кого и ид счете
 }

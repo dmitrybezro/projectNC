@@ -30,6 +30,7 @@ public class EntityDtoConverter {
                 entity.getName());
         objectDto.setObjectName(entity.getName());
         objectDto.setParentId(entity.getParentId());
+        objectDto.setObjectType(entity.getObjectType());
         objectDto.setObjectDoc(entity.getCreationDate());
 
         List<ValueDto> paramList = new ArrayList<>();
@@ -54,7 +55,10 @@ public class EntityDtoConverter {
     public static <T extends BaseEntity> T toEntity(ObjectDto objectDto, List<ValueDto> listValue, Class<T> clazz) throws IllegalAccessException, InstantiationException {
         T entity = clazz.newInstance();
         entity.setId(objectDto.getObjectId());
+        entity.setParentId(objectDto.getParentId());
         entity.setName(objectDto.getObjectName());
+        entity.setObjectType(objectDto.getObjectType());
+        entity.setCreationDate(objectDto.getObjectDoc());
 
         List<Field> fieldList = getClassFields(clazz);
         HashMap<BigInteger, Field> filteredFields = getFieldsWithAttribute(fieldList);
