@@ -65,11 +65,19 @@ public class AccountService {
         for(ObjectDto object: pageDto){
             transactionsList.add(entityService.getById(object.getObjectId(),Transaction.class));
         }
-        int p =3 ;
+
         return transactionsList;
     }
 
     public Task transfer(TransferRequestIn request, BigInteger userId) throws Exception {
+        Account checkAccount = entityService.getByIdAndParentId(
+                request.getIdAccountSend(),
+                userId,
+                Account.class);
+        if(checkAccount == null){
+            return null;
+        }
+
         Task task = new Task(
                 request.getIdAccountSend(),
                 request.getIdAccountReceive(),
@@ -90,6 +98,7 @@ public class AccountService {
     }
 
     public void processTask(Task task, BigInteger userId) throws Exception {
+        TimeUnit.SECONDS.sleep(1);
         //  Build accounts
         Account senderAccount;
         Account draftAccount;
@@ -142,7 +151,7 @@ public class AccountService {
 
         while(toRecipientAttempts < 3 && !isToRecipientSuccess){
             try {
-                isToRecipientSuccess = transferToRecipient(task, draftAccount, senderAccount);
+                isToRecipientSuccess = transferToRecipient(task, draftAccount,receiverAccount);
             } catch (Exception e){
                 transferErr = e.getMessage();
             }
@@ -166,6 +175,10 @@ public class AccountService {
 
         if (sender.getBalance() < task.getTransferAmount()) {
             return "There are not enough funds on the account";
+        }
+
+        if(!sender.getCurrency().equals(receiver.getCurrency())) {
+            return "Different account currencies";
         }
 
         return null;
@@ -214,6 +227,7 @@ public class AccountService {
 
     public Task getTransactionInfo(BigInteger taskId, BigInteger userId) throws IllegalAccessException, InstantiationException {
         Task task = entityService.getById(taskId, Task.class);
+
         Account account = entityService.getById(task.getParentId(), Account.class);
 
         if(!account.getParentId().equals(userId)){

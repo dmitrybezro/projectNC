@@ -27,7 +27,8 @@ public class EntityService {
     public <T extends BaseEntity> T getById(BigInteger id, Class<T> clazz) throws IllegalAccessException, InstantiationException {
         ObjectDto objectDto = objectsRepository.findByObjectId(id);
         List<ValueDto> listValue = valueRepository.findAllByObjectId(id);
-
+        if(objectDto==null)
+            return null;
         T entity = EntityDtoConverter.toEntity(objectDto, listValue, clazz);
 
         return entity;
@@ -63,6 +64,8 @@ public class EntityService {
 
     public <T extends BaseEntity> T getByParentId(BigInteger parentId, Class<T> clazz) throws IllegalAccessException, InstantiationException {
         ObjectDto objectDto2 = objectsRepository.findByParentIdAndObjectType(parentId, "account");
+        if(objectDto2==null)
+            return null;
         List<ValueDto> listValue = valueRepository.findAllByObjectId(objectDto2.getObjectId());
         T entity = EntityDtoConverter.toEntity(objectDto2, listValue, clazz);
         return entity;
